@@ -1,7 +1,7 @@
 ### setup
 ```
-git clone
-cd
+git clone https://github.com/lotusxai/pet-days.git
+cd pet-days/
 
 ```
 
@@ -16,3 +16,7 @@ export RSTUDIO_WHICH_R=/usr/local/bin/R
 - [ ] runApp()
 - [ ] install required libraries, update a requirement.txt file to keep track
 - [ ] Run MySQL locally
+- [ ] update requirement.txt
+- [ ] add run bash for requirements.txt in setup
+- [ ] add .gitignore for DSStore mac OS and R.
+- [ ] from scheme setup dummy values for csv files in asset/data
