@@ -18,5 +18,13 @@ export RSTUDIO_WHICH_R=/usr/local/bin/R
 - [ ] Run MySQL locally
 - [ ] update requirement.txt
 - [ ] add run bash for requirements.txt in setup
-- [ ] add .gitignore for DSStore mac OS and R.
+```
+Error in library(aws.s3) : there is no package called ‘aws.s3’
+the stable library does not have a pass build.
+```
+- [ ] add .gitignore for DSStore mac OS and R. (.DS_Store)
 - [ ] from scheme setup dummy values for csv files in asset/data
+- [ ] convert tasks to issues for the repo
+- [ ] add Continue Integration badge.  [![Build Status](https://travis-ci.org/)](https://travis-ci.org/) - "*build passing*"
+- [ ] add Test/Code Coverage badge.  [![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/)](https://codecov.io/github/)
+- [ ] add CodeClimate badge.  [![codecov.io Code Coverage](https://img.shields.io/codecov/c/github/)](https://codecov.io/github/)
