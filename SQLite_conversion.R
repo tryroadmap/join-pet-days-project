@@ -549,7 +549,7 @@ dbSendStatement(mydb, "CREATE VIEW viewVaccineHistTimeline AS
     CASE WHEN test_current_flag = 'Y' THEN 'current'
     ELSE 'past'
     END AS className,
-   CAST((JulianDay(test_date_expires, 'localtime') - JulianDay('now', 'localtime') AS Integer) AS days_to_expiration
+   CAST((JulianDay(test_date_expires, 'localtime') - JulianDay('now', 'localtime')) AS Integer) AS days_to_expiration
   FROM viewTestsPetsVets
   WHERE test_current_flag IS NOT NULL")
 
