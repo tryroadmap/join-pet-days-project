@@ -7,6 +7,7 @@ As a digital nomad traveling with 2 dogs, keeping track of all their medical and
 
 #### setup
 
+
 ```
 git clone https://github.com/lotusxai/pet-days.git
 
@@ -15,11 +16,26 @@ cd pet-days/
 ./run_requirements.sh requirements.txt
 ```
 
-Run app
+Setup data: 
+
+To create the SQLite db, make use of the setup_db.R script which provides the view and table creation scripts. 
+
+```
+Rscript setup_db.R
+```
+
+Run app:
 
 ```
  R -e "shiny::runApp(launch.browser = TRUE)" 
 ```
+
+#### launched application
+
+![tab1](screenshots/tab1.png "Tab 1")
+![tab2](screenshots/tab2.png "Tab 2")
+![tab3](screenshots/tab3.png "Tab 3")
+![tab4](screenshots/tab4.png "Tab 4")
 
 #### sessionInfo()
 
