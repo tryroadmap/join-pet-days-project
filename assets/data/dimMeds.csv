@@ -1,1 +1,7 @@
-med_id	med_name	med_description	med_dosage	med_dosage_freq	med_start_date	med_end_date	med_category	med_current_flag	med_prescription	created_date	updated_date	pet_id	vet_id	visit_id
+med_id,med_name,med_description,med_dosage,med_dosage_freq,med_start_date,med_end_date,med_category,med_current_flag,med_prescription,created_date,updated_date,pet_id,vet_id,visit_id
+,Drontal Feline,parasitic worms,,,2012-04-06,2012-04-08,,N,,2012-04-06,,2,2,9
+,Drontal Feline,parasitic worms,,,2017-10-12,2017-10-14,,N,,2017-10-12,,3,2,10
+,Amoxicillin/Clavulanic acid ,Infections,,,2018-10-12,2018-10-14,,N,,2018-10-12,,3,2,11
+,HomeoPet,Cough drops,2 drops ,2 times daily,2018-05-05,2018-05-07,Throat,N,,2018-05-05,,1,3,12
+,Epiotic Solution,Ear infection medicine,2 drops ,2 times daily,2015-02-02,2015-03-03,Ear,N,,2015-02-02,,1,1,13
+,Atopica,allergic dermatitis,1,3 times daily,2018-03-05,2018-03-06,Skin,N,,2018-03-05,,2,3,14
