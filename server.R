@@ -51,18 +51,12 @@ function(input, output, session) {
   output$pet_image <- renderImage({
     req(input$pet)
     
-    tmpfile <- pet_records$dimPets %>%
-      filter(pet_name %in% input$pet) %>%
-      select(pet_picture) %>%
-      str_replace("https://s3.amazonaws.com", "s3:/") %>%
-      get_object() %>%
-      image_read() %>%
-      image_write(tempfile(fileext = ".png"), format = "png")
+    tmpfile <- paste0("www/images/", input$pet,".png")
     
     list(src = tmpfile,
-         height = "200px",
+         height = "150px",
          contentType = "image/png")
-  }, deleteFile = TRUE)
+  }, deleteFile = FALSE)
   
   # create pet info to be displayed in sidepanel ####
   output$pet_info <- renderText({
