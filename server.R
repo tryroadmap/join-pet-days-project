@@ -1,39 +1,10 @@
 # Web app to display pet records and keep track of visits, test results, vaccines, etc.
 
-library(shiny)
-library(dplyr)
-library(stringr)
-library(purrr)
-library(tibble)
-library(timevis)
-library(DT)
-library(aws.s3)
-library(sparkline)
-library(magick)
-library(RSQLite)
-library(lubridate)
-library(fs)
-
 source("utils.R")
 
 # getting the data outside of server, so data is created once 
 # and shared across all user sessions (within the same R process)
-# switching to sqlite
-
-tables <- c("dimPets",
-            "dimTests",
-            "viewVisitsPets",
-            "viewRoutineMedHistTimeline",
-            "viewMedHistTimeline",
-            "viewVisitsVets",
-            "viewVisitsTests",
-            "viewVisitsMeds",
-            "viewMedsPetsVets",
-            "viewVisitsPetsVets",
-            "viewVaccineHistTimeline")
-con <- dbConnect(SQLite(), "PetRecords.sqlite")
-pet_records <- setNames(map(tables, ~ dbReadTable(con, .)), tables)
-dbDisconnect(con)
+pet_records <- read_data()
 
 function(input, output, session) {
   # create options for pet selection radio button ####
@@ -61,22 +32,18 @@ function(input, output, session) {
   # create pet info to be displayed in sidepanel ####
   output$pet_info <- renderText({
     req(input$pet)
-    
-    dob <- paste(strong("DOB:"), pet_records$dimPets %>% 
-                   filter(pet_name %in% input$pet) %>% 
+    pet_details <- pet_records$dimPets %>% 
+      filter(pet_name %in% input$pet)
+    dob <- paste(strong("DOB:"), pet_details %>% 
                    mutate(pet_dob = format(as.Date(pet_dob), format = "%m-%d-%Y")) %>% 
                    pull(pet_dob))
-    species <- paste(strong("Species:"), pet_records$dimPets %>% 
-                       filter(pet_name %in% input$pet) %>% 
+    species <- paste(strong("Species:"), pet_details %>% 
                        pull(pet_species))
-    breed <- paste(strong("Breed:"), pet_records$dimPets %>%
-                     filter(pet_name %in% input$pet) %>% 
+    breed <- paste(strong("Breed:"), pet_details %>% 
                      pull(pet_breed))
-    sex <- paste(strong("Sex:"), pet_records$dimPets %>% 
-                   filter(pet_name %in% input$pet) %>% 
+    sex <- paste(strong("Sex:"), pet_details %>% 
                    pull(pet_sex))
-    color <- paste(strong("Color:"), pet_records$dimPets %>% 
-                     filter(pet_name %in% input$pet) %>% 
+    color <- paste(strong("Color:"), pet_details %>% 
                      pull(pet_color))
     
     paste(dob, species, breed, sex, color, sep = "<br>")
@@ -283,28 +250,24 @@ function(input, output, session) {
   # get routine details ####
   output$routine_visit_info <- renderText({
     if (show_routine_fun()) {
-      date <- paste(strong("Visit Date:"), pet_records$viewVisitsVets %>% 
-                      filter(visit_id == id()) %>%
+      visit_details <- pet_records$viewVisitsVets %>% 
+        filter(visit_id == id())
+      date <- paste(strong("Visit Date:"), visit_details %>%
                       mutate(visit_date = format(as.Date(visit_date), format = "%m-%d-%Y")) %>% 
                       pull(visit_date))
-      vet <- paste(strong("Vet:"), pet_records$viewVisitsVets %>% 
-                     filter(visit_id == id()) %>%
+      vet <- paste(strong("Vet:"), visit_details %>%
                      pull(vet_name))
-      doctor <- paste(strong("Doctor:"), pet_records$viewVisitsVets %>%
-                        filter(visit_id == id()) %>%
+      doctor <- paste(strong("Doctor:"), visit_details %>%
                         pull(visit_doctor))
-      vet_phone <- paste(strong("Vet Phone:"), pet_records$viewVisitsVets %>%
-                           filter(visit_id == id()) %>%
+      vet_phone <- paste(strong("Vet Phone:"), visit_details %>%
                            pull(vet_phone))
-      visit_category <- pet_records$viewVisitsVets %>%
-        filter(visit_id == id()) %>%
+      visit_category <- visit_details %>%
         pull(visit_category)
       # notes for visits tagged as medical and routine are shown when clicking medical item
       if (str_detect(visit_category, "medical")) {
         notes <- NA
       } else {
-        notes <- paste(strong("Visit Information:"), pet_records$viewVisitsVets %>%
-                         filter(visit_id == id()) %>%
+        notes <- paste(strong("Visit Information:"), visit_details %>%
                          pull(visit_notes))
       }
       
@@ -349,21 +312,18 @@ function(input, output, session) {
   # get visit details ####
   output$visit_info <- renderText({
     if (show_visit_details_fun()) {
-      date <- paste(strong("Visit Date:"), pet_records$viewVisitsVets %>% 
-                      filter(visit_id == id()) %>%
+      visit_details <- pet_records$viewVisitsVets %>% 
+        filter(visit_id == id())
+      date <- paste(strong("Visit Date:"), visit_details %>%
                       mutate(visit_date = format(as.Date(visit_date), format = "%m-%d-%Y")) %>% 
                       pull(visit_date))
-      vet <- paste(strong("Vet:"), pet_records$viewVisitsVets %>% 
-                     filter(visit_id == id()) %>%
+      vet <- paste(strong("Vet:"), visit_details %>%
                      pull(vet_name))
-      doctor <- paste(strong("Doctor:"), pet_records$viewVisitsVets %>%
-                        filter(visit_id == id()) %>%
+      doctor <- paste(strong("Doctor:"), visit_details %>%
                         pull(visit_doctor))
-      vet_phone <- paste(strong("Vet Phone:"), pet_records$viewVisitsVets %>%
-                           filter(visit_id == id()) %>%
+      vet_phone <- paste(strong("Vet Phone:"), visit_details %>%
                            pull(vet_phone))
-      notes <- paste(strong("Visit Information:"), pet_records$viewVisitsVets %>%
-                       filter(visit_id == id()) %>%
+      notes <- paste(strong("Visit Information:"), visit_details %>%
                        pull(visit_notes))
       
       paste(date, vet, doctor, vet_phone, notes, sep = "<br>")
