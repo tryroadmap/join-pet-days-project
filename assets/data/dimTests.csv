@@ -1,2 +1,2 @@
 test_id,test_name,test_description,test_result,test_series_num,test_date_performed,test_date_expires,test_current_flag,test_category,test_result_doc,created_date,updated_date,pet_id,vet_id,visit_id
-,CBC,Blood test for fever,normal,,10/10/08,,,medical,,10/10/08,,1,1,4
+,CBC,Blood test for fever,normal,,2008-10-10,,,medical,,2008-10-10,,1,1,4
