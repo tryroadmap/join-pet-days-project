@@ -6,12 +6,8 @@ mydb <- dbConnect(SQLite(), "PetRecords.sqlite")
 
 
 # read csv
-dimPets <- read.csv("assets/data/dimPets.csv")
-dimVets <- read.csv("assets/data/dimVets.csv")
-dimVisits <- read.csv("assets/data/dimVisits.csv")
-dimTests <- read.csv("assets/data/dimTests.csv")
-dimMeds <- read.csv("assets/data/dimMeds.csv")
-dimVaccines <- read.csv("assets/data/dimVaccines.csv")
+fpath <- file.path("assets","data", "tables.RData")
+load(fpath)
 
 # create tables
 rs <- dbSendStatement(mydb, "CREATE TABLE `dimPets` (
@@ -130,44 +126,49 @@ dbWriteTable(mydb, "dimVisits", dimVisits, append = TRUE)
 #dbGetQuery(mydb, "SELECT * FROM dimVaccines")
 
 # create triggers
-dbSendStatement(mydb, "CREATE TRIGGER update_date_pets AFTER UPDATE 
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_pets AFTER UPDATE 
            ON dimPets
             BEGIN
             UPDATE dimPets SET updated_date = datetime('now') WHERE pet_id = new.pet_id;
             END;")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE TRIGGER update_date_vets AFTER UPDATE 
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_vets AFTER UPDATE 
             ON dimVets
             BEGIN
             UPDATE dimVets SET updated_date = datetime('now') WHERE vet_id = new.vet_id;
             END;")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE TRIGGER update_date_meds AFTER UPDATE 
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_meds AFTER UPDATE 
             ON dimMeds
             BEGIN
             UPDATE dimMeds SET updated_date = datetime('now') WHERE med_id = new.med_id;
             END;")
 
-dbSendStatement(mydb, "CREATE TRIGGER update_date_tests AFTER UPDATE  
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_tests AFTER UPDATE  
             ON dimTests
             BEGIN
             UPDATE dimTests SET updated_date = datetime('now') WHERE test_id = new.test_id;
             END;")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE TRIGGER update_date_vac AFTER UPDATE 
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_vac AFTER UPDATE 
             ON dimVaccines
             BEGIN
             UPDATE dimVaccines SET updated_date = datetime('now') WHERE vaccine_id = new.vaccine_id;
             END;")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE TRIGGER update_date_visits AFTER UPDATE  
+rs <- dbSendStatement(mydb, "CREATE TRIGGER update_date_visits AFTER UPDATE  
             ON dimVisits
             BEGIN
             UPDATE dimVisits SET updated_date = datetime('now') WHERE visit_id = new.visit_id;
             END;")
+dbClearResult(rs)
 
 # create views
-dbSendStatement(mydb, "CREATE VIEW viewVisitsPets AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVisitsPets AS
   SELECT 
     dimVisits.visit_id,
     dimVisits.visit_date,
@@ -190,8 +191,9 @@ dbSendStatement(mydb, "CREATE VIEW viewVisitsPets AS
   FROM dimVisits
   INNER JOIN dimPets
   ON dimVisits.pet_id = dimPets.pet_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewRoutineMedHistTimeline AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewRoutineMedHistTimeline AS
   SELECT 'routine' AS 'group', 
     visit_id || '_' || 'routine' AS id,
     pet_name,
@@ -221,8 +223,9 @@ dbSendStatement(mydb, "CREATE VIEW viewRoutineMedHistTimeline AS
     test_category AS category
   FROM viewTestsPetsVets
   WHERE test_category like 'medical%'")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewMedHistTimeline AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewMedHistTimeline AS
   SELECT 'med' AS 'group', 
     visit_id || '_' || 'med' AS id,
     pet_name,
@@ -242,8 +245,9 @@ dbSendStatement(mydb, "CREATE VIEW viewMedHistTimeline AS
     test_category AS category
   FROM viewTestsPetsVets
   WHERE test_category like 'medical%'")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVisitsVets AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVisitsVets AS
   SELECT dimVisits.visit_id,
     dimVisits.visit_date,
     dimVisits.visit_weight,
@@ -268,8 +272,9 @@ dbSendStatement(mydb, "CREATE VIEW viewVisitsVets AS
   FROM dimVisits
   INNER JOIN dimVets
   ON dimVisits.vet_id = dimVets.vet_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVisitsTests AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVisitsTests AS
   SELECT dimVisits.visit_id,
     dimVisits.visit_date,
     dimVisits.visit_weight,
@@ -295,8 +300,9 @@ dbSendStatement(mydb, "CREATE VIEW viewVisitsTests AS
   FROM dimVisits
   LEFT JOIN dimTests
   ON dimVisits.visit_id = dimTests.visit_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVisitsMeds AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVisitsMeds AS
   SELECT dimVisits.visit_id,
      dimVisits.visit_date,
      dimVisits.visit_weight,
@@ -322,8 +328,9 @@ dbSendStatement(mydb, "CREATE VIEW viewVisitsMeds AS
   FROM dimVisits
   LEFT JOIN dimMeds
   ON dimVisits.visit_id = dimMeds.visit_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewMedsPetsVets AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewMedsPetsVets AS
   SELECT dimMeds.med_id,
      dimMeds.med_name,
      dimMeds.med_description,
@@ -357,9 +364,10 @@ dbSendStatement(mydb, "CREATE VIEW viewMedsPetsVets AS
   ON dimMeds.pet_id = dimPets.pet_id
   LEFT JOIN dimVets
   ON dimMeds.vet_id = dimVets.vet_id")
+dbClearResult(rs)
 
 ## Views used by other views:
-dbSendStatement(mydb, "CREATE VIEW viewTestsPetsVets AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewTestsPetsVets AS
   SELECT dimTests.test_id,
     dimTests.test_name,
     dimTests.test_description,
@@ -395,8 +403,9 @@ dbSendStatement(mydb, "CREATE VIEW viewTestsPetsVets AS
   ON dimTests.pet_id = dimPets.pet_id
   INNER JOIN dimVets
   ON dimTests.vet_id = dimVets.vet_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVaccinesPetsVets AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVaccinesPetsVets AS
 SELECT dimVaccines.vaccine_id,
    dimVaccines.vaccine_name,
    dimVaccines.vaccine_description,
@@ -430,9 +439,10 @@ INNER JOIN dimPets
 ON dimVaccines.pet_id = dimPets.pet_id
 INNER JOIN dimVets
 ON dimVaccines.vet_id = dimVets.vet_id")
-##
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVisitsPetsVets AS
+
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVisitsPetsVets AS
   SELECT dimVisits.visit_id,
      dimVisits.visit_date,
      dimVisits.visit_weight,
@@ -465,8 +475,9 @@ dbSendStatement(mydb, "CREATE VIEW viewVisitsPetsVets AS
   ON dimVisits.pet_id = dimPets.pet_id
   INNER JOIN dimVets
   ON dimVisits.vet_id = dimVets.vet_id")
+dbClearResult(rs)
 
-dbSendStatement(mydb, "CREATE VIEW viewVaccineHistTimeline AS
+rs <- dbSendStatement(mydb, "CREATE VIEW viewVaccineHistTimeline AS
   SELECT pet_name,
     vaccine_name AS content,
     vaccine_date_given AS 'start',
@@ -493,6 +504,7 @@ dbSendStatement(mydb, "CREATE VIEW viewVaccineHistTimeline AS
    CAST((JulianDay(test_date_expires, 'localtime') - JulianDay('now', 'localtime')) AS Integer) AS days_to_expiration
   FROM viewTestsPetsVets
   WHERE test_current_flag IS NOT NULL")
+dbClearResult(rs)
 
 dbDisconnect(mydb)
 
