@@ -7,16 +7,19 @@ As a digital nomad traveling with 2 dogs, keeping track of all their medical and
 
 #### setup
 
-setup_db.R creates the SQLite db script and provides the view and table creation scripts.
-
 ```
 git clone https://github.com/lotusxai/pet-days.git
 cd pet-days/
+#Rscript run_requirements.R
+
 ./run_requirements.sh requirements.txt
 
 Rscript setup_db.R
 R -e "shiny::runApp(launch.browser = TRUE)"
+
 ```
+run_requirements.R installs the necessary packages, runs setup_db.R, and launches the Shiny app.  
+Note: The setup_db.R script contains the view and table creation scripts.
 
 #### Screenshots
 
