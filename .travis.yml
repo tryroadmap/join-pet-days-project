@@ -1,4 +1,4 @@
 language: r
 sudo: false
 script:
-    - Rscript run_requirements.R
+    - R -e run_requirements.R
