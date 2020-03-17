@@ -1,1 +1,4 @@
-language: R
+language: r
+sudo: false
+script:
+    - Rscript run_requirements.R
