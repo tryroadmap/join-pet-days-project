@@ -1,4 +1,8 @@
 language: r
+
 sudo: false
+warnings_are_errors: false
+cache: packages
+
 script:
     - R -e run_requirements.R
