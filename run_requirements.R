@@ -18,7 +18,3 @@ devtools::install_github("rstudio/fontawesome")
 
 #set up the sqlite db
 source("setup_db.R")
-
-# run the shiny app
-shiny::runApp(launch.browser = TRUE)
-
