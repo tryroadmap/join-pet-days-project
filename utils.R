@@ -16,7 +16,7 @@ read_data <- function(dbname) {
                 "viewVaccineHistTimeline")
     con <- dbConnect(SQLite(), dbname)
     tryCatch(
-        pet_records <- setNames(map(tables, function(.) {
+        pet_records <- setNames(lapply(tables, function(.) {
             dbReadTable(con, .)
           }), tables),
         error = function(e) {
