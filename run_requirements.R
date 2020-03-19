@@ -18,3 +18,6 @@ devtools::install_github("rstudio/fontawesome")
 
 #set up the sqlite db
 source("setup_db.R")
+
+#run tests to check above steps
+testthat::test_dir("tests")
