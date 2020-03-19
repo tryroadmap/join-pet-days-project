@@ -4,12 +4,10 @@ timevis
 shinycssloaders
 shinythemes
 shiny
-DT
 dplyr
 stringr
 purrr
 tibble
-magick
 RSQLite
 lubridate
 fs
