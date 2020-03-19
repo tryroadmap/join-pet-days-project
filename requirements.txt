@@ -11,3 +11,4 @@ tibble
 RSQLite
 lubridate
 fs
+testthat
