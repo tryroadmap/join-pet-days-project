@@ -1,7 +1,7 @@
 library(RSQLite)
 
 # Connects to and reads from the SQLite DB 
-read_data <- function() {
+read_data <- function(dbname) {
     # list required tables/views
     tables <- c("dimPets",
                 "dimTests",
@@ -14,7 +14,7 @@ read_data <- function() {
                 "viewMedsPetsVets",
                 "viewVisitsPetsVets",
                 "viewVaccineHistTimeline")
-    con <- dbConnect(SQLite(), "PetRecords.sqlite")
+    con <- dbConnect(SQLite(), dbname)
     tryCatch(
         pet_records <- setNames(map(tables, function(.) {
             dbReadTable(con, .)

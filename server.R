@@ -4,7 +4,7 @@ source("utils.R")
 
 # getting the data outside of server, so data is created once 
 # and shared across all user sessions (within the same R process)
-pet_records <- read_data()
+pet_records <- read_data("PetRecords.sqlite")
 
 function(input, output, session) {
   # create options for pet selection radio button ####
@@ -15,7 +15,7 @@ function(input, output, session) {
     radioButtons(inputId = "pet",
                  label = "Select pet:",
                  choices = pets,
-                 selected = "Layla")
+                 selected = "Mylov")
   })
   
   # get pet image to be displayed in sidepanel ####
@@ -413,9 +413,7 @@ function(input, output, session) {
       filter(pet_name %in% input$pet, med_current_flag == "Y") %>%
       arrange(desc(med_start_date)) %>%
       mutate(med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" =  vet_name, "Start Date" = med_start_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category) %>% 
-      datatable(options = list(pageLength = 10, dom = 'ltip'),
-                rownames = FALSE)
+      select(Medication = med_name, "Prescribing Vet" =  vet_name, "Start Date" = med_start_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
   })
   
   # create past meds data table ####
@@ -427,9 +425,7 @@ function(input, output, session) {
       arrange(desc(med_end_date)) %>%
       mutate(med_end_date = format(as.Date(med_end_date), format = "%m-%d-%Y"),
              med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" = vet_name, "Start Date" = med_start_date, "End Date" = med_end_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category) %>% 
-      datatable(options = list(pageLength = 10),
-                rownames = FALSE)
+      select(Medication = med_name, "Prescribing Vet" = vet_name, "Start Date" = med_start_date, "End Date" = med_end_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
   })
   
   # create vets data table ####
@@ -440,9 +436,7 @@ function(input, output, session) {
       filter(pet_name %in% input$pet, vet_name != "No Vet") %>%
       select(Vet = vet_name, Phone = vet_phone, Website = vet_website, Email = vet_email, State = vet_state) %>% 
       distinct() %>% 
-      arrange(Vet) %>%
-      datatable(options = list(pageLength = 10, dom = 'ltip'),
-                rownames = FALSE)
+      arrange(Vet) 
   })
   
   # create vaccine timeline ####
