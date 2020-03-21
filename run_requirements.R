@@ -1,3 +1,7 @@
+logfile <- file("assets/log/run.log", open = "at")
+sink(logfile, append = TRUE, split = TRUE, type = c("output", "message"))
+cat(paste0("-------- Run Log ", Sys.time(), " --------\n"))
+
 pkgs <- readLines("requirements.txt")
 
 # installs packages only if not present  
@@ -21,3 +25,4 @@ source("setup_db.R")
 
 #run tests to check above steps
 testthat::test_dir("tests")
+sink()
