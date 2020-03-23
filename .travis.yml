@@ -1,1 +1,7 @@
-language: R
+language: r
+
+warnings_are_errors: false
+cache: packages
+
+script:
+    - R -f run_requirements.R
