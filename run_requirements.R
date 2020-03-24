@@ -1,4 +1,7 @@
-logfile <- file("assets/log/run_requirements.log", open = "at")
+# create logs dir
+logs_dir <- file.path("assets","log")
+dir.create(logs_dir)
+logfile <- file(file.path(logs_dir, "run_requirements.log"), open = "at")
 sink(logfile, append = TRUE, split = TRUE, type ="output")
 sink(logfile, append = TRUE, type="message")
 cat(paste0("-------- Run Log ", Sys.time(), " --------\n"))
@@ -31,3 +34,5 @@ try(source("setup_db.R"))
 cat(paste(Sys.time(), "\t-- Unit tests --\n"))
 testthat::test_dir("tests")
 sink()
+cat(paste("LOG DIRECTORY:", logs_dir))
+
