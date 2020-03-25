@@ -6,8 +6,8 @@ mydb <- dbConnect(SQLite(), "PetRecords.sqlite")
 
 
 # read csv
-fpath <- file.path("assets","data", "tables.RData")
-load(fpath)
+fpath <- file.path("assets","data", "pet_records.RData")
+load(fpath, verbose = TRUE)
 
 # create tables
 rs <- dbSendStatement(mydb, "CREATE TABLE `dimPets` (

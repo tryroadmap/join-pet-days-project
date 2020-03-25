@@ -16,8 +16,9 @@ cd pet-days/
 Rscript run_requirements.R
 
 ```
-run_requirements.R installs the necessary packages, runs setup_db.R and tests the setup.  
+run_requirements.R installs the necessary packages, runs setup_db.R and tests the setup.
 Note: The setup_db.R script contains the view and table creation scripts.
+You can check the output in log files in the assets/log/ folder.
 
 #### running the app
 
