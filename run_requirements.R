@@ -12,7 +12,7 @@ pkgs <- readLines("requirements.txt")
 install_missing <- function(pkg) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
         cat(paste(Sys.time(), "Installing package:", pkg, "\n"))
-        install.packages(pkg, repos = "https://cloud.r-project.org/")
+        install.packages(pkg, repos = "https://cloud.r-project.org/", dependencies = TRUE)
     } else {
         cat(paste("Skipping already installed package:", pkg, "\n"))
     }
