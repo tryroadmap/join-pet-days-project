@@ -1,5 +1,13 @@
 # Web app to display pet records and keep track of visits, test results, vaccines, etc.
 
+library(shiny)
+library(shinythemes)
+library(sparkline)
+library(timevis)
+library(DT)
+library(shinycssloaders)
+library(fontawesome)
+
 fluidPage(
   # define theme ####
   theme = shinytheme("lumen"),
