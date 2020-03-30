@@ -20,11 +20,6 @@ install_missing <- function(pkg) {
 
 invisible(sapply(pkgs, install_missing))
 
-# run the fontawesome package from github till suitable replacement found 
-# TODO find a replacement
-install_missing("devtools")
-devtools::install_github("rstudio/fontawesome")
-
 #set up the sqlite db
 cat(paste(Sys.time(), "\t-- Database setup --\n"))
 
