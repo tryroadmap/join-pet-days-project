@@ -1,5 +1,17 @@
 # Web app to display pet records and keep track of visits, test results, vaccines, etc.
 
+library(shiny)
+library(dplyr)
+library(stringr)
+library(purrr)
+library(tibble)
+library(timevis)
+library(DT)
+library(sparkline)
+library(RSQLite)
+library(lubridate)
+library(fs)
+
 source("utils.R")
 
 # getting the data outside of server, so data is created once 

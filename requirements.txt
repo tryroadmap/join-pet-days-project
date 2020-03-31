@@ -1,9 +1,10 @@
+shiny
+shinycssloaders
+shinythemes
+DT
 htmlwidgets
 sparkline
 timevis
-shinycssloaders
-shinythemes
-shiny
 dplyr
 stringr
 purrr
