@@ -474,8 +474,8 @@ function(input, output, session) {
                group = content)
       
       groups <- data.frame(
-        id = c("Rabies", "Distemper", "Bordetella (drops)", "Bordetella (injection)", "Flu", "Lepto", "Rattlesnake", "Fecal Test", "Heartworm Test"),
-        content = c("Rabies", "Distemper", "Bordetella (drops)", "Bordetella (injection)", "Flu", "Lepto", "Rattlesnake", "Fecal Test", "Heartworm Test")
+        id = unique(pet_records$viewVaccineHistTimeline$content),
+        content = unique(pet_records$viewVaccineHistTimeline$content)
       )
       timevis(vacc_data, groups = groups, options = config)
       }
