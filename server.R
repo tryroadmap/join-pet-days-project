@@ -407,40 +407,6 @@ function(input, output, session) {
     contentType = NA
   )
   
-  # create current meds data table ####
-  output$current_meds_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewMedsPetsVets %>%
-      filter(pet_name %in% input$pet, med_current_flag == "Y") %>%
-      arrange(desc(med_start_date)) %>%
-      mutate(med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" =  vet_name, "Start Date" = med_start_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
-  })
-  
-  # create past meds data table ####
-  output$past_meds_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewMedsPetsVets %>%
-      filter(pet_name %in% input$pet, med_current_flag == "N") %>%
-      arrange(desc(med_end_date)) %>%
-      mutate(med_end_date = format(as.Date(med_end_date), format = "%m-%d-%Y"),
-             med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" = vet_name, "Start Date" = med_start_date, "End Date" = med_end_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
-  })
-  
-  # create vets data table ####
-  output$vets_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewVisitsPetsVets %>%
-      filter(pet_name %in% input$pet, vet_name != "No Vet") %>%
-      select(Vet = vet_name, Phone = vet_phone, Website = vet_website, Email = vet_email, State = vet_state) %>% 
-      distinct() %>% 
-      arrange(Vet) 
-  })
-  
   # create vaccine timeline ####
   output$vaccine_history_timeline <- renderTimevis({
     req(input$pet, input$vacc)
