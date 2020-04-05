@@ -17,6 +17,7 @@ source("utils.R")
 # getting the data outside of server, so data is created once 
 # and shared across all user sessions (within the same R process)
 pet_records <- read_data("PetRecords.sqlite")
+data_dir <- file.path("assets", "data")
 
 function(input, output, session) {
   # create options for pet selection radio button ####
@@ -364,16 +365,10 @@ function(input, output, session) {
   })
   
   # show exam file if visit is selected in timeline ####
-  exam_path <- file_temp("exam_pdf", tmp_dir = "www", ext = ".pdf")
-  
   output$exam <- renderUI({
     if (show_visit_details_fun() | show_routine_fun()) {
       if (!is.na(exam())) {
-        exam() %>%
-          str_replace("https://s3.amazonaws.com", "s3:/") %>%
-          get_object() %>%
-          writeBin(exam_path)
-        tags$iframe(style = "height:1400px; width:100%", src = str_sub(exam_path, 5))
+        tags$iframe(style = "height:1400px; width:100%", src = file.path(data_dir, exam()))
       } else {
         h3("No Exam Notes Available")
         }
@@ -386,21 +381,15 @@ function(input, output, session) {
       "exam.pdf"
     },
     content = function(file) {
-      file.copy(exam_path, file)
+      file.copy(file.path(data_dir, exam()), file)
     }
   )
   
   # show test results file if test is selected in timeline ####
-  test_result_path <- file_temp("test_result_pdf", tmp_dir = "www", ext = ".pdf")
-  
   output$test_results <- renderUI({
     if (show_test_results_fun()) {
       if (!is.na(test_result())) {
-        test_result() %>%
-          str_replace("https://s3.amazonaws.com", "s3:/") %>%
-          get_object() %>%
-          writeBin(test_result_path)
-        tags$iframe(style = "height:1400px; width:100%", src = str_sub(test_result_path, 5))
+        tags$iframe(style = "height:1400px; width:100%", src = file.path(data_dir, test_result()))
       } else {
         h3("No Test Results Available")
         }
@@ -413,43 +402,10 @@ function(input, output, session) {
       "test_result.pdf"
     },
     content = function(file) {
-      file.copy(test_result_path, file)
-    }
+      file.copy(file.path(data_dir, test_result()), file)
+    },
+    contentType = NA
   )
-  
-  # create current meds data table ####
-  output$current_meds_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewMedsPetsVets %>%
-      filter(pet_name %in% input$pet, med_current_flag == "Y") %>%
-      arrange(desc(med_start_date)) %>%
-      mutate(med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" =  vet_name, "Start Date" = med_start_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
-  })
-  
-  # create past meds data table ####
-  output$past_meds_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewMedsPetsVets %>%
-      filter(pet_name %in% input$pet, med_current_flag == "N") %>%
-      arrange(desc(med_end_date)) %>%
-      mutate(med_end_date = format(as.Date(med_end_date), format = "%m-%d-%Y"),
-             med_start_date = format(as.Date(med_start_date), format = "%m-%d-%Y")) %>% 
-      select(Medication = med_name, "Prescribing Vet" = vet_name, "Start Date" = med_start_date, "End Date" = med_end_date, Dosage = med_dosage, Frequency = med_dosage_freq, Category = med_category)
-  })
-  
-  # create vets data table ####
-  output$vets_table <- renderDataTable({
-    req(input$pet)
-    
-    pet_records$viewVisitsPetsVets %>%
-      filter(pet_name %in% input$pet, vet_name != "No Vet") %>%
-      select(Vet = vet_name, Phone = vet_phone, Website = vet_website, Email = vet_email, State = vet_state) %>% 
-      distinct() %>% 
-      arrange(Vet) 
-  })
   
   # create vaccine timeline ####
   output$vaccine_history_timeline <- renderTimevis({
@@ -474,8 +430,8 @@ function(input, output, session) {
                group = content)
       
       groups <- data.frame(
-        id = c("Rabies", "Distemper", "Bordetella (drops)", "Bordetella (injection)", "Flu", "Lepto", "Rattlesnake", "Fecal Test", "Heartworm Test"),
-        content = c("Rabies", "Distemper", "Bordetella (drops)", "Bordetella (injection)", "Flu", "Lepto", "Rattlesnake", "Fecal Test", "Heartworm Test")
+        id = unique(pet_records$viewVaccineHistTimeline$content),
+        content = unique(pet_records$viewVaccineHistTimeline$content)
       )
       timevis(vacc_data, groups = groups, options = config)
       }
@@ -520,16 +476,10 @@ function(input, output, session) {
   outputOptions(output, "show_vaccine_cert", suspendWhenHidden = FALSE)
   
   # show vaccine cert if vaccine is selected in timeline ####
-  vaccine_cert_path <- file_temp("vaccine_cert_pdf", tmp_dir = "www", ext = ".pdf")
-  
   output$vaccine_cert <- renderUI({
     if (!is.null(values$vacc_tl_selected)) {
       if (!is.na(cert())) {
-        cert() %>% 
-          str_replace("https://s3.amazonaws.com", "s3:/") %>%
-          get_object() %>% 
-          writeBin(vaccine_cert_path)
-        tags$iframe(style = "height:1400px; width:100%", src = str_sub(vaccine_cert_path, 5))
+        tags$iframe(style = "height:1400px; width:100%", src = file.path(data_dir, cert()))
       } else {
         h3("No Vaccine Certificate Available")
         }
@@ -542,13 +492,13 @@ function(input, output, session) {
       "vaccine_cert.pdf"
     },
     content = function(file) {
-      file.copy(vaccine_cert_path, file)
+      file.copy(file.path(data_dir, cert()), file)
     }
   )
   
-  # delete session files when the application exits (when runApp exits) 
+  # delete session files when the application exits (when runApp exits) -- no session files
   # or after each user session ends
-  onStop(function()
-    unlink(c(test_result_path, exam_path, vaccine_cert_path)))
+  # onStop(function()
+  #   unlink(c(test_result_path, exam_path, vaccine_cert_path)))
   
 }

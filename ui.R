@@ -20,6 +20,9 @@ fluidPage(
   
   sidebarLayout(
     sidebarPanel(width = 2,
+                 #debugging
+                 actionButton("browser", "Browser Switch"),
+                 
                  # display options for pet selection ####
                  uiOutput("all_pets"),
                  
@@ -143,25 +146,6 @@ fluidPage(
                                                     br(), br()
                                                     ),
                                    uiOutput("vaccine_cert")
-                                   ),
-                          tabPanel("Medication History",
-                                   # current meds table ####
-                                   wellPanel(h3("Current Medications"),
-                                             br(),
-                                             dataTableOutput(outputId = "current_meds_table")
-                                             ),
-                                   # past meds table ####
-                                   wellPanel(h3("Past Medications"), 
-                                             br(),
-                                             dataTableOutput(outputId = "past_meds_table")
-                                             )
-                                   ),
-                          tabPanel("Vet History",
-                                   # vet history ####
-                                   wellPanel(h3("Vets"), 
-                                             br(),
-                                             dataTableOutput(outputId = "vets_table")
-                                             )
                                    )
                           )
               )
